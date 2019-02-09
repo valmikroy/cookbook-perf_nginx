@@ -1,0 +1,33 @@
+worker_processes 1;
+
+events {
+  worker_connections 1024;
+}
+
+http {
+    server {
+        listen 8443 ssl;
+        client_max_body_size 0;
+
+        ssl_prefer_server_ciphers on;
+        ssl_ciphers "ALL:!aNULL:!MEDIUM:!LOW:!WEAK:!EXPORT:!DES:!PSK:!SRP:!CAMELLIA:!3DES:!AES256:!EDH";
+
+        ssl_protocols           TLSv1 TLSv1.1 TLSv1.2;
+
+ 	ssl_certificate	        <%= node['selfsigned_certificate']['destination'] %>/server.crt;
+        ssl_certificate_key     <%= node['selfsigned_certificate']['destination'] %>/server.key;
+
+#        ssl_certificate         /usr/local/nginx/ssl/server.pem.ecc;
+#        ssl_certificate_key     /usr/local/nginx/ssl/server.key.ecc;
+
+#        ssl_certificate         /etc/nginx/ssl/server.pem.rsa;
+#        ssl_certificate_key     /etc/nginx/ssl/server.key.rsa;
+
+#        ssl_dhparam             /usr/local/nginx/ssl/dh.pem;
+        # Health check handler for cops
+        location / {
+            root /usr/share/nginx/www;
+            rewrite ^  /index.html break;
+        }
+    }
+}
